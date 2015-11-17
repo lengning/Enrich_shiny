@@ -1,5 +1,4 @@
 library(shiny)
-library(gdata)
 library(shinyFiles)
 options(shiny.maxRequestSize=500*1024^2) 
 # Define UI for slider demo application
