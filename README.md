@@ -1,6 +1,7 @@
 # Enrich_shiny
 R/shiny app for enrichment analysis
 
+## Installation
 This app requires the following packages : shiny, org.Hs.eg.db, org.Mm.eg.db, GO.db, allez, EACI
 
 To install shiny and db packages, in R run:
@@ -23,6 +24,15 @@ R CMD INSTALL allez.tar.gz
 
 R CMD INSTALL EACI_0.0.1.tar.gz
 
+## Run the app
+
+In R, run:
+
+library(shiny)
+
+runGitHub("lengning/Enrich_shiny")
+
+## Input
 
 The input file should contain gene scores. The score could be either continuous or binary (1 for on and 0 for off).
 Note for EASE method, only binary scores could be used as input.
@@ -47,7 +57,7 @@ The user could also choose whether one-tailed p value should be calculated. If t
 The user could use the 'output folder' button to choose the output directory. If it is not selected, home directory (~/) will be used
 as the output directory. 
 
-Outputs:
+## Output
 
 XX_allsets.txt: enrichment results of all gene sets (GO sets + local sets). 
 
