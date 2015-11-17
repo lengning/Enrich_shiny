@@ -74,7 +74,7 @@ The output files contain GO term (NA for local sets), set p value, adjusted p va
 
 
 ## Trouble shooting
-When running runGitHub() function, if you get a download error as shown below, please create a empty directoy locally and download server.R and ui.R into this local directory, then run the following command in R: > > 
+When running runGitHub() function, if you get a download error as shown below, please create a empty directoy locally and download server.R and ui.R into this local directory, then run the following command in R: 
 
 > runApp("your_local_directory_which_contains_the_2_files")
 
