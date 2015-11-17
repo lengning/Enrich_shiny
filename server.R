@@ -155,7 +155,7 @@ shinyServer(function(input, output, session) {
 				tmp <- Act()
 				paste("# significant sets:",
 							nrow(tmp$SigAllres),
-							"; output directory:", tmp$Dir)
+							" (shown below); output directory:", tmp$Dir)
   })
 
 	output$tab <- renderDataTable({
