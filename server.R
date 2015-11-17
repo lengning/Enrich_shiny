@@ -1,5 +1,4 @@
 library(shiny)
-library(gdata)
 library(shinyFiles)
 
 #####################
