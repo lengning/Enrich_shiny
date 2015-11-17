@@ -38,7 +38,7 @@ For lists with length M - N, the M+1, ..., N's column in that row should be fill
 is not specified, only GO terms will be considered. 
 Example input files could be found at https://github.com/lengning/Enrich_shiny/tree/master/example_input   (MarkerLists)
 
-The threshold to filter out small(large) sets defaults to 20 (500). Sets that are smaller (larger) than the threshold are not considered.
+The threshold to filter out small(large) sets defaults to 5 (500). Sets that are smaller (larger) than the threshold are not considered.
 
 The annotation could be either 'human' or 'mouse'. The p value cutoff defaults to 0.1.
 
