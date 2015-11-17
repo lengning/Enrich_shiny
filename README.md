@@ -6,33 +6,33 @@ This app requires the following packages : shiny, shinyFiles, org.Hs.eg.db, org.
 
 To install shiny and db packages, in R run:
 
-install.packages("shiny")
+> install.packages("shiny")
 
-install.packages("shinyFiles")
+> install.packages("shinyFiles")
 
-source("http://bioconductor.org/biocLite.R")
+> source("http://bioconductor.org/biocLite.R")
 
-biocLite("org.Hs.eg.db”)
+> biocLite("org.Hs.eg.db”)
 
-biocLite("org.Mm.eg.db”)
+> biocLite("org.Mm.eg.db”)
 
-biocLite("GO.db")
+> biocLite("GO.db")
 
 allez and EACI could be found at https://github.com/lengning/Enrichment-test/tree/master/pkgs
 
 To install these two packages, in bash run 
 
-R CMD INSTALL allez.tar.gz
+> R CMD INSTALL allez.tar.gz
 
-R CMD INSTALL EACI_0.0.1.tar.gz
+> R CMD INSTALL EACI_0.0.1.tar.gz
 
 ## Run the app
 
 In R, run:
 
-library(shiny)
+> library(shiny)
 
-runGitHub("lengning/Enrich_shiny")
+> runGitHub("lengning/Enrich_shiny")
 
 ## Input
 
@@ -74,7 +74,9 @@ The output files contain GO term (NA for local sets), set p value, adjusted p va
 
 
 ## Trouble shooting
-When running runGitHub() function, if you get a download error as shown below, please create a empty directoy locally and download server.R and ui.R into this local directory, then run the following command in R: runApp("your_local_directory_which_contains_the_2_files")
+When running runGitHub() function, if you get a download error as shown below, please create a empty directoy locally and download server.R and ui.R into this local directory, then run the following command in R: > > 
+
+> runApp("your_local_directory_which_contains_the_2_files")
 
 
 Example error msg:
