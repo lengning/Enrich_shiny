@@ -28,7 +28,7 @@ shinyUI(pageWithSidebar(
 		# 
 		numericInput("llsize",
 		label = "lower limit for set size",
-						        value = 20),
+						        value = 5),
 		numericInput("ulsize",
 		label = "upper limit for set size",
 						        value = 500),
