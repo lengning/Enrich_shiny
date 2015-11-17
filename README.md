@@ -2,11 +2,13 @@
 R/shiny app for enrichment analysis
 
 ## Installation
-This app requires the following packages : shiny, org.Hs.eg.db, org.Mm.eg.db, GO.db, allez, EACI
+This app requires the following packages : shiny, shinyFiles, org.Hs.eg.db, org.Mm.eg.db, GO.db, allez, EACI
 
 To install shiny and db packages, in R run:
 
 install.packages("shiny")
+
+install.packages("shinyFiles")
 
 source("http://bioconductor.org/biocLite.R")
 
