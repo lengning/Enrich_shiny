@@ -72,3 +72,23 @@ XX_localsets_significant.txt: significant terms in local lists
 
 The output files contain GO term (NA for local sets), set p value, adjusted p value, z score, set size, set mean and set sd. Sets are sorted by p value. Sets with large absoloute z scores are expected to have small p values.
 
+
+## Trouble shooting
+When running runGitHub() function, if you get a download error as shown below, please create a empty directoy locally and download server.R and ui.R into this local directory, then run the following command in R: runApp("your_local_directory_which_contains_the_2_files")
+
+
+Example error msg:
+
+> runGitHub("lengning/Enrich_shiny")
+
+Downloading https://github.com/lengning/Enrich_shiny/archive/master.tar.gz
+
+Error in runUrl(url, subdir = subdir, destdir = destdir, ...) :
+
+  Failed to download URL https://github.com/lengning/Enrich_shiny/archive/master.tar.gz
+
+In addition: Warning message:
+
+In download.file(url, method = method, ...) :
+
+  download had nonzero exit status
