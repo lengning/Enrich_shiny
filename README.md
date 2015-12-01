@@ -34,6 +34,10 @@ In R, run:
 
 > runGitHub("lengning/Enrich_shiny")
 
+
+
+![screen](https://github.com/lengning/Enrich_shiny/blob/master/figs/enrich_screenshot.png)
+
 ## Input
 
 The input file should contain gene scores. The score could be either continuous or binary (1 for on and 0 for off).
