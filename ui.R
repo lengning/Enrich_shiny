@@ -31,13 +31,13 @@ shinyUI(pageWithSidebar(
 		numericInput("ulsize",
 		label = "upper limit for set size",
 						        value = 500),
-		checkboxGroupInput("species_buttons",
+		radioButtons("species_buttons",
 		    label = "species?",
 				 choices = list("human" = 1,
 								   "mouse" = 2),
 						         selected = 1)),								
 		column(6,
-			checkboxGroupInput("method_buttons",
+		radioButtons("method_buttons",
 		    label = "method to use? (For EASE, input should be a binary vector;
 			 	For allez and EACI, input could be either a binary vector or a continuous vector)",
 				 choices = list("allez" = 1,
@@ -45,7 +45,7 @@ shinyUI(pageWithSidebar(
 									 "EASE" = 3),
 						         selected = 1),								
 		
-			checkboxGroupInput("tail_buttons",
+		radioButtons("tail_buttons",
 		    label = "one-tailed test? (For EASE, only one-tailed test is available;
 			 	For allez and EACI, please use one-tailed test if inputs are absolute values)",
 				 choices = list("one-tailed" = 1,
