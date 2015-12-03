@@ -81,6 +81,12 @@ XX_localsets_significant.txt: significant terms in local lists
 The output files contain GO term (NA for local sets), set p value, adjusted p value, z score, set size, set mean and set sd. Sets are sorted by p value. Sets with large absoloute z scores are expected to have small p values.
 
 
+## Note
+
+The 'create new folder' button in the output folder selection pop-up is disfunctional right now
+
+
+
 ## Trouble shooting
 When running runGitHub() function, if you get a download error as shown below, please create a empty directoy locally and download server.R and ui.R into this local directory, then run the following command in R: 
 
