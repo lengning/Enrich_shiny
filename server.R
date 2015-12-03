@@ -6,11 +6,12 @@ library(shinyFiles)
 #####################
 
 
-enrich_allez <- function(File, FileSep, Local, LocalSep, outprefix, lib.v, side,  Lowersetsize, Uppersetsize, pcut ){
+enrich_allez <- function(File, FileSep, alter, namev, Local, LocalSep, outprefix, lib.v, side,  Lowersetsize, Uppersetsize, pcut ){
 
 # csv or txt
-FileType=FileSep
+FileType <- FileSep
 
+if(alter==FALSE){
 if(FileType=="csv"){
 	cat("\n Read in csv file \n")
 	prefix=strsplit(File,split="\\.csv")[[1]][1]
@@ -22,6 +23,16 @@ if(FileType!="csv"){
 	In=read.table(File,stringsAsFactors=F,row.names=1)
 	if(!is.numeric(In[[1]]))In=read.table(File,stringsAsFactors=F,row.names=1,header=T)
 }
+Score=In[[1]]
+names(Score)=rownames(In)
+}
+if(alter==TRUE){
+	allgnames <- unique(unlist(as.list(get(paste0(lib.v,"SYMBOL")))))
+	Score <- rep(0, length(allgnames))
+	names(Score) <- as.vector(allgnames)
+	Score[intersect(names(Score),namev)] <- 1
+}
+
 
 if(!is.null(Local)){
 	FileType2=LocalSep
@@ -46,9 +57,6 @@ if(!is.null(Local)){
 } else List=NULL
 
 library(allez)
-Score=In[[1]]
-names(Score)=rownames(In)
-
 #browser()
 Out=allez(score=Score,lib=lib.v,idtype="SYMBOL",locallist=List)
 
@@ -85,10 +93,11 @@ Out=list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.
 #####################
 # EASE david
 #####################
-enrich_ease <- function(File, FileSep, Local, LocalSep, outprefix, lib.v,  Lowersetsize, Uppersetsize, pcut ){
+enrich_ease <- function(File, FileSep, alter, namev, Local, LocalSep, outprefix, lib.v,  Lowersetsize, Uppersetsize, pcut ){
 # csv or txt
 FileType=FileSep
 
+if(alter==FALSE){
 if(FileType=="csv"){
 	cat("\n Read in csv file \n")
 	prefix=strsplit(File,split="\\.csv")[[1]][1]
@@ -100,6 +109,16 @@ if(FileType!="csv"){
 	In=read.table(File,stringsAsFactors=F,row.names=1)
 	if(!is.numeric(In[[1]]))In=read.table(File,stringsAsFactors=F,row.names=1,header=T)
 }
+Score=In[[1]]
+names(Score)=rownames(In)
+}
+if(alter==TRUE){
+	allgnames <- unique(unlist(as.list(get(paste0(lib.v,"SYMBOL")))))
+	Score <- rep(0, length(allgnames))
+	names(Score) <- as.vector(allgnames)
+	Score[intersect(names(Score),namev)] <- 1
+}
+
 
 if(!is.null(Local)){
 	FileType2=LocalSep
@@ -125,8 +144,6 @@ if(!is.null(Local)){
 
 
 library(EACI)
-Score=In[[1]]
-names(Score)=rownames(In)
 if(length(setdiff(Score,c(0,1)))>0) stop("EASE(DAVID) only takes binary inputs!")
 
 Out=easetest(score=Score,lib=lib.v,idtype="SYMBOL",locallist=List, minsetsize=Lowersetsize)
@@ -159,10 +176,11 @@ Out=list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.
 # EACI
 #####################
 
-enrich_eaci <- function(File, FileSep, Local, LocalSep, outprefix, lib.v, side,  Lowersetsize, Uppersetsize, pcut ){
+enrich_eaci <- function(File, FileSep,alter, namev, Local, LocalSep, outprefix, lib.v, side,  Lowersetsize, Uppersetsize, pcut ){
 # csv or txt
 FileType=FileSep
 
+if(alter==FALSE){
 if(FileType=="csv"){
 	cat("\n Read in csv file \n")
 	prefix=strsplit(File,split="\\.csv")[[1]][1]
@@ -173,6 +191,15 @@ if(FileType!="csv"){
 	prefix=strsplit(File,split=paste0("\\.",FileType))[[1]][1]
 	In=read.table(File,stringsAsFactors=F,row.names=1)
 	if(!is.numeric(In[[1]]))In=read.table(File,stringsAsFactors=F,row.names=1,header=T)
+}
+Score=In[[1]]
+names(Score)=rownames(In)
+}
+if(alter==TRUE){
+	allgnames <- unique(unlist(as.list(get(paste0(lib.v,"SYMBOL")))))
+	Score <- rep(0, length(allgnames))
+	names(Score) <- as.vector(allgnames)
+	Score[intersect(names(Score),namev)] <- 1
 }
 
 if(!is.null(Local)){
@@ -198,8 +225,6 @@ if(!is.null(Local)){
 } else List=NULL
 
 library(EACI)
-Score=In[[1]]
-names(Score)=rownames(In)
 Out=eacitest(score=Score,lib=lib.v,idtype="SYMBOL",locallist=List,iter=10, minsetsize=Lowersetsize)
 
 Mat=Out[[1]][,c("Term","set.mean","set.sd","set.size","pval")]
@@ -250,10 +275,15 @@ shinyServer(function(input, output, session) {
 		print(outdir)
 
 		the.file <- input$filename$name #input
-		file.toread <- input$filename$datapath	
-		file.sep0 <- strsplit(the.file,split="\\.")[[1]]
-		file.sep <- file.sep0[length(file.sep0)]
-
+		file.tf <- ifelse(is.null(the.file),FALSE,TRUE)
+		file.toread <- NULL
+		file.sep <- NULL
+		if(file.tf==TRUE){
+			file.toread <- input$filename$datapath	
+			file.sep0 <- strsplit(the.file,split="\\.")[[1]]
+			file.sep <- file.sep0[length(file.sep0)]
+		}
+		
 		Group.file <- input$markerlist$name # markerlist
   	GroupB <- ifelse(is.null(Group.file),FALSE,TRUE)
 		mklist.toread <- NULL
@@ -264,9 +294,15 @@ shinyServer(function(input, output, session) {
 			mklist.sep <- mklist.sep0[length(mklist.sep0)]
 		}
 
-
+		browser()
+		namev <- NULL
+		gn.file <- input$genename$name
+		gntf <- ifelse(is.null(gn.file),FALSE,TRUE)
+		if(!is.null(gn.file))namev <- read.csv(input$genename$datapath,stringsAsFactors=F, header=F)[[1]]
+		
 		method.v <- c("allez","EACI","EASE")
 		List <- list(
+		alterinput = gntf,	namev=namev,					 
 		Input = file.toread, Inputsep=file.sep,
 		mkInput = mklist.toread, mkSep=mklist.sep,
 		Dir=outdir, out_pre=input$exFileName,
@@ -282,9 +318,13 @@ shinyServer(function(input, output, session) {
 		db.v <- List$species
 		if(db.v=="human")lib.v <- "org.Hs.eg"
 		if(db.v=="mouse")lib.v <- "org.Mm.eg"
-		
+		pkgname <- paste0(lib.v,".db")
+		#browser()
+		library(pkgname,character.only = TRUE)
+
 		if(List$method_use=="allez"){
-		Res <- enrich_allez(File=List$Input, FileSep=List$Inputsep,
+		Res <- enrich_allez(File=List$Input, FileSep=List$Inputsep, 
+												alter=List$alterinput, namev=List$namev,
 												outprefix=paste(List$Dir,List$out_pre,sep="/"),
 							Local=List$mkInput, LocalSep=List$mkSep,
 							lib.v=lib.v, side=List$one_tail,  
@@ -294,7 +334,8 @@ shinyServer(function(input, output, session) {
 		}
 
 		if(List$method_use=="EACI"){
-		Res <- enrich_eaci(File=List$Input, FileSep=List$Inputsep,
+		Res <- enrich_eaci(File=List$Input, FileSep=List$Inputsep, 
+											 alter=List$alterinput,namev=List$namev,
 												outprefix=paste(List$Dir,List$out_pre,sep="/"),
 							Local=List$mkInput, LocalSep=List$mkSep,
 							lib.v=lib.v, side=List$one_tail,  
@@ -305,6 +346,7 @@ shinyServer(function(input, output, session) {
 
 		if(List$method_use=="EASE"){
 		Res <- enrich_ease(File=List$Input, FileSep=List$Inputsep,
+											 alter=List$alterinput,namev=List$namev,
 												outprefix=paste(List$Dir,List$out_pre,sep="/"),
 							Local=List$mkInput, LocalSep=List$mkSep,
 							lib.v=lib.v, 

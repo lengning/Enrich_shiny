@@ -18,10 +18,16 @@ shinyUI(pageWithSidebar(
 							binary inputs. All genes in the first column will be used to estimate the
 							background distribution."),
 
+		# gene name input
+		fileInput("genename", label = "Alternative input. It should contains only one column, which provides gene names.
+							The program will generate a binary score vector which assigns 1 to genes in this file and assigns 0 to the other genes.
+							This file will be ignored if the scores are provided above.
+				    (support .csv,  .txt, .tab)"),					
+
 		# marker list
 		fileInput("markerlist", label = "marker list \n file name (if not specified, only
 							GO sets will be considered;
-		support .csv, .xls, .txt, .tab)"),
+		support .csv,  .txt, .tab)"),
 	
 		column(2,
 		# 
