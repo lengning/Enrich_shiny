@@ -82,13 +82,162 @@ write.table(Local.p,file=paste0(outprefix,"_enrichment_localsets_sig.txt"), sep=
 Out=list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.p)
 }
 
+#####################
+# EASE david
+#####################
+enrich_ease <- function(File, FileSep, Local, LocalSep, outprefix, lib.v,  Lowersetsize, Uppersetsize, pcut ){
+# csv or txt
+FileType=FileSep
+
+if(FileType=="csv"){
+	cat("\n Read in csv file \n")
+	prefix=strsplit(File,split="\\.csv")[[1]][1]
+	In=read.csv(File,stringsAsFactors=F,row.names=1)
+}
+if(FileType!="csv"){
+	cat("\n Read in tab delimited file \n")
+	prefix=strsplit(File,split=paste0("\\.",FileType))[[1]][1]
+	In=read.table(File,stringsAsFactors=F,row.names=1)
+	if(!is.numeric(In[[1]]))In=read.table(File,stringsAsFactors=F,row.names=1,header=T)
+}
+
+if(!is.null(Local)){
+	FileType2=LocalSep
+
+	if(FileType2=="csv"){
+		cat("\n Read in csv file (gene list)\n")
+		ListIn=read.csv(Local,stringsAsFactors=F,row.names=1)
+	}
+	if(FileType2!="csv"){
+		cat("\n Read in tab delimited file (gene list)\n")
+		ListIn=read.table(Local,stringsAsFactors=F,row.names=1)
+	}
+	if(nrow(ListIn)>1){
+	List=sapply(1:nrow(ListIn),function(i)setdiff(as.vector(ListIn[i,]),c(""," ")))
+	}
+	if(nrow(ListIn)==1) {
+		List=vector("list",1)
+		List[[1]]=setdiff(unlist(ListIn),c(""," "))}
+
+	names(List)=rownames(ListIn)
+
+} else List=NULL
 
 
+library(EACI)
+Score=In[[1]]
+names(Score)=rownames(In)
+if(length(setdiff(Score,c(0,1)))>0) stop("EASE(DAVID) only takes binary inputs!")
+
+Out=easetest(score=Score,lib=lib.v,idtype="SYMBOL",locallist=List, minsetsize=Lowersetsize)
+
+Mat=Out$setscores[,c("Term","set.size","pval")]
+Mat$p.adj <- p.adjust(Mat$pval, method="BH")
+Mat <- Mat[which(Mat$set.size>Lowersetsize),]
+Mat <- Mat[which(Mat$set.size<Uppersetsize),]
+message("sets with size < ",Lowersetsize, " or > ", Uppersetsize, " are not considered" )
+MatOut=Mat[order(Mat$pval),c("Term","pval","p.adj","set.size")]
 
 
+LocalOut=MatOut[which(is.na(MatOut[,"Term"])),]
+MatOut2 <-  cbind(rownames(MatOut), MatOut)
+LocalOut2 <- cbind(rownames(LocalOut), LocalOut)
+colnames(MatOut2)[1] = colnames(LocalOut2)[1] = "GO_ID"
+write.table(MatOut2,file=paste0(outprefix,"_DavidEASEenrichment_allsets.txt"),sep="\t", row.names=F)
+write.table(LocalOut2,file=paste0(outprefix,"_DavidEASEenrichment_localsets.txt"), sep="\t", row.names=F)
+
+Mat.p <- MatOut2[which(MatOut2$p.adj<=pcut),]
+Local.p <- LocalOut2[which(LocalOut2$p.adj<=pcut),]
+write.table(Mat.p,file=paste0(outprefix,"_DavidEASEenrichment_enrichment_allsets_sig.txt"),sep="\t", row.names=F)
+write.table(Local.p,file=paste0(outprefix,"_DavidEASEenrichment_enrichment_localsets_sig.txt"), sep="\t", row.names=F)
+
+Out=list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.p)
+}
 
 
+#####################
+# EACI
+#####################
+
+enrich_eaci <- function(File, FileSep, Local, LocalSep, outprefix, lib.v, side,  Lowersetsize, Uppersetsize, pcut ){
+# csv or txt
+FileType=FileSep
+
+if(FileType=="csv"){
+	cat("\n Read in csv file \n")
+	prefix=strsplit(File,split="\\.csv")[[1]][1]
+	In=read.csv(File,stringsAsFactors=F,row.names=1)
+}
+if(FileType!="csv"){
+	cat("\n Read in tab delimited file \n")
+	prefix=strsplit(File,split=paste0("\\.",FileType))[[1]][1]
+	In=read.table(File,stringsAsFactors=F,row.names=1)
+	if(!is.numeric(In[[1]]))In=read.table(File,stringsAsFactors=F,row.names=1,header=T)
+}
+
+if(!is.null(Local)){
+	FileType2=LocalSep
+
+	if(FileType2=="csv"){
+		cat("\n Read in csv file (gene list)\n")
+		ListIn=read.csv(Local,stringsAsFactors=F,row.names=1)
+	}
+	if(FileType2!="csv"){
+		cat("\n Read in tab delimited file (gene list)\n")
+		ListIn=read.table(Local,stringsAsFactors=F,row.names=1)
+	}
+	if(nrow(ListIn)>1){
+	List=sapply(1:nrow(ListIn),function(i)setdiff(as.vector(ListIn[i,]),c(""," ")))
+	}
+	if(nrow(ListIn)==1) {
+		List=vector("list",1)
+		List[[1]]=setdiff(unlist(ListIn),c(""," "))}
+
+	names(List)=rownames(ListIn)
+
+} else List=NULL
+
+library(EACI)
+Score=In[[1]]
+names(Score)=rownames(In)
+Out=eacitest(score=Score,lib=lib.v,idtype="SYMBOL",locallist=List,iter=10, minsetsize=Lowersetsize)
+
+Mat=Out[[1]][,c("Term","set.mean","set.sd","set.size","pval")]
+p.val.raw <- Mat$pval
+if(side=="F") p.val <- p.val.raw
+if(side=="T"){
+	tmp <- (Mat$set.mean-Out$aux$meanbg)/sd(Mat$set.mean)
+	p.val <- pnorm(-abs(tmp))
+	}	
+Mat$p.adj <- p.adjust(p.val, method="BH")
+Mat <- Mat[which(Mat$set.size>Lowersetsize),]
+Mat <- Mat[which(Mat$set.size<Uppersetsize),]
+MatOut=Mat[order(Mat$pval),c("Term","pval","p.adj","set.size","set.mean","set.sd")]
+message("sets with size < ",Lowersetsize, " or > ", Uppersetsize, " are not considered" )
+
+
+LocalOut=MatOut[which(is.na(MatOut[,"Term"])),]
+
+MatOut2 <-  cbind(rownames(MatOut), MatOut)
+LocalOut2 <- cbind(rownames(LocalOut), LocalOut)
+colnames(MatOut2)[1] = colnames(LocalOut2)[1] = "GO_ID"
+write.table(MatOut2,file=paste0(outprefix,"_EACIenrichment_allsets.txt"),sep="\t", row.names=F)
+write.table(LocalOut2,file=paste0(outprefix,"_EACIenrichment_localsets.txt"), sep="\t", row.names=F)
+
+Mat.p <- MatOut2[which(MatOut2$p.adj<=pcut),]
+Local.p <- LocalOut2[which(LocalOut2$p.adj<=pcut),]
+write.table(Mat.p,file=paste0(outprefix,"_EACIenrichment_allsets_sig.txt"),sep="\t", row.names=F)
+write.table(Local.p,file=paste0(outprefix,"_EACIenrichment_localsets_sig.txt"), sep="\t", row.names=F)
+
+
+Out=list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.p)
+}
+
+#####################
+#####################
 # Define server logic for slider examples
+#####################
+#####################
 shinyServer(function(input, output, session) {
 		volumes <- c('home'="~")
 		shinyDirChoose(input, 'Outdir', roots=volumes, session=session, restrictions=system.file(package='base'))
@@ -143,6 +292,28 @@ shinyServer(function(input, output, session) {
 							pcut=List$pval_cutoff)
 		
 		}
+
+		if(List$method_use=="EACI"){
+		Res <- enrich_eaci(File=List$Input, FileSep=List$Inputsep,
+												outprefix=paste(List$Dir,List$out_pre,sep="/"),
+							Local=List$mkInput, LocalSep=List$mkSep,
+							lib.v=lib.v, side=List$one_tail,  
+							Lowersetsize=List$lower, Uppersetsize=List$upper,
+							pcut=List$pval_cutoff)
+		
+		}
+
+		if(List$method_use=="EASE"){
+		Res <- enrich_ease(File=List$Input, FileSep=List$Inputsep,
+												outprefix=paste(List$Dir,List$out_pre,sep="/"),
+							Local=List$mkInput, LocalSep=List$mkSep,
+							lib.v=lib.v, 
+							Lowersetsize=List$lower, Uppersetsize=List$upper,
+							pcut=List$pval_cutoff)
+		
+		}
+
+
 
 	 	List=c(List, Res)	
 }) 

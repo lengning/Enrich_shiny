@@ -14,7 +14,7 @@ shinyUI(pageWithSidebar(
 							Input should contain two columns - the first column contains gene names
 							and the second column contains gene scores. The gene scores could be
 							binary - in which 1 represents on and 0 represents off; or continuous - 
-							which may be PC loadings, p values or weights. Note EASE only takes
+							which may be PC loadings, p values or weights. Note EASE(DAVID) only takes
 							binary inputs. All genes in the first column will be used to estimate the
 							background distribution."),
 
@@ -38,15 +38,15 @@ shinyUI(pageWithSidebar(
 						         selected = 1)),								
 		column(6,
 		radioButtons("method_buttons",
-		    label = "method to use? (For EASE, input should be a binary vector;
+		    label = "method to use? (For EASE(DAVID), input should be a binary vector;
 			 	For allez and EACI, input could be either a binary vector or a continuous vector)",
 				 choices = list("allez" = 1,
 								   "EACI" = 2,
-									 "EASE" = 3),
+									 "EASE(DAVID)" = 3),
 						         selected = 1),								
 		
 		radioButtons("tail_buttons",
-		    label = "one-tailed test? (For EASE, only one-tailed test is available;
+		    label = "one-tailed test? (For EASE(DAVID), only one-tailed test is available;
 			 	For allez and EACI, please use one-tailed test if inputs are absolute values)",
 				 choices = list("one-tailed" = 1,
 								   "two-tailed" = 2),
