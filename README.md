@@ -91,16 +91,16 @@ Example error msg:
 
 > runGitHub("lengning/Enrich_shiny")
 
-Downloading https://github.com/lengning/Enrich_shiny/archive/master.tar.gz
+> Downloading https://github.com/lengning/Enrich_shiny/archive/master.tar.gz
 
-Error in runUrl(url, subdir = subdir, destdir = destdir, ...) :
+> Error in runUrl(url, subdir = subdir, destdir = destdir, ...) :
 
-  Failed to download URL https://github.com/lengning/Enrich_shiny/archive/master.tar.gz
+>   Failed to download URL https://github.com/lengning/Enrich_shiny/archive/master.tar.gz
 
-In addition: Warning message:
+> In addition: Warning message:
 
-In download.file(url, method = method, ...) :
+> In download.file(url, method = method, ...) :
 
-  download had nonzero exit status
+>   download had nonzero exit status
   
 Alternative solution: Uninstalling wget fixed this issue.
