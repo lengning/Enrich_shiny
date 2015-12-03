@@ -102,3 +102,5 @@ In addition: Warning message:
 In download.file(url, method = method, ...) :
 
   download had nonzero exit status
+  
+Alternative solution: Uninstalling wget fixed this issue.
