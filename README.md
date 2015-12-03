@@ -26,6 +26,10 @@ To install these two packages, in bash run
 
 > R CMD INSTALL EACI_0.0.1.tar.gz
 
+Or install locally via R GUI / Rstudio
+
+
+
 ## Run the app
 
 In R, run:
