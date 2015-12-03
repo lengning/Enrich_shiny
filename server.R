@@ -294,7 +294,7 @@ shinyServer(function(input, output, session) {
 			mklist.sep <- mklist.sep0[length(mklist.sep0)]
 		}
 
-		browser()
+		#browser()
 		namev <- NULL
 		gn.file <- input$genename$name
 		gntf <- ifelse(is.null(gn.file),FALSE,TRUE)
