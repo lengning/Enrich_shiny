@@ -6,27 +6,29 @@ This app requires the following packages : shiny, shinyFiles, org.Hs.eg.db, org.
 
 To install shiny and db packages, in R run:
 
-> install.packages('shiny')
+install.packages('shiny')
 
-> install.packages('shinyFiles')
+install.packages('shinyFiles')
 
-> source('http://bioconductor.org/biocLite.R')
+install.packages('devtools')
 
-> biocLite('org.Hs.eg.db')
+source('http://bioconductor.org/biocLite.R')
 
-> biocLite('org.Mm.eg.db')
+biocLite('org.Hs.eg.db')
 
-> biocLite('GO.db')
+biocLite('org.Mm.eg.db')
 
-allez and EACI could be found at https://github.com/lengning/Enrichment-test/tree/master/pkgs
+biocLite('GO.db')
 
-To install these two packages, in bash run 
+library(devtools)
 
-> R CMD INSTALL allez.tar.gz
+install_github('lengning/allez')
 
-> R CMD INSTALL EACI_0.0.1.tar.gz
+install_github('lengning/EACI/package/EACI')
 
-Or install locally via R GUI / Rstudio
+
+allez and EACI could also be found locally at https://github.com/lengning/Enrichment-test/tree/master/pkgs
+
 
 
 
@@ -34,9 +36,9 @@ Or install locally via R GUI / Rstudio
 
 In R, run:
 
-> library(shiny)
+library(shiny)
 
-> runGitHub("lengning/Enrich_shiny")
+runGitHub("lengning/Enrich_shiny")
 
 
 
