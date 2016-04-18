@@ -38,6 +38,8 @@ In R, run:
 
 library(shiny)
 
+library(shinyFiles)
+
 runGitHub("lengning/Enrich_shiny")
 
 
