@@ -49,6 +49,7 @@ runGitHub("lengning/Enrich_shiny")
 ## Input
 
 The input file should contain gene scores. The score could be either continuous or binary (1 for on and 0 for off).
+If continouse input is provided, it is suggested to convert the gene scores to z scores. The program will consider genes with highest score as significant if one sided test is specified (If two sided test is specified, the program will consider genes with highest absolute score as significant). 
 Note for EASE method, only binary scores could be used as input.
 The input file should contain only one column. Row names should be gene names. Each entry represents loading (or score) 
 of that particular gene.
