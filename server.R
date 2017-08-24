@@ -79,15 +79,33 @@ MatOut2 <-  cbind(rownames(MatOut), MatOut)
 LocalOut2 <- cbind(rownames(LocalOut), LocalOut)
 colnames(MatOut2)[1] = colnames(LocalOut2)[1] = "GO_ID"
 
+Mat.Cats <- rownames(MatOut2)
+Mat.Aux <- Out$aux$set.data
+head(Mat.Aux)
+MaxCat <- pmin(length(Mat.Cats), 1000)
+
+GenesInCats <- sapply(1:MaxCat, function(x) {
+  gcats <- paste0(Mat.Aux[which(Mat.Aux$go_id == Mat.Cats[x]),"symbol"], collapse=", ")
+  return(gcats)
+  })
+names(GenesInCats) <- Mat.Cats[1:MaxCat]
+
+MatOut2 <- data.frame(MatOut2[Mat.Cats,], Genes = GenesInCats[Mat.Cats])
+
 write.table(MatOut2,file=paste0(outprefix,"_enrichment_allsets.txt"),sep="\t", row.names=F)
-write.table(LocalOut2,file=paste0(outprefix,"_enrichment_localsets.txt"), sep="\t", row.names=F)
+if(!is.null(Local)){
+  write.table(LocalOut2,file=paste0(outprefix,"_enrichment_localsets.txt"), sep="\t", row.names=F)
+}
 
-Mat.p <- MatOut2[which(MatOut2$p.adj<=pcut),]
-Local.p <- LocalOut2[which(LocalOut2$p.adj<=pcut),]
+Mat.p <- MatOut2[which(MatOut2$p.adj <= pcut),]
+Local.p <- LocalOut2[which(LocalOut2$p.adj <= pcut),]
 write.table(Mat.p,file=paste0(outprefix,"_enrichment_allsets_sig.txt"),sep="\t", row.names=F)
-write.table(Local.p,file=paste0(outprefix,"_enrichment_localsets_sig.txt"), sep="\t", row.names=F)
 
-Out=list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.p)
+if(!is.null(Local)){
+  write.table(Local.p,file=paste0(outprefix,"_enrichment_localsets_sig.txt"), sep="\t", row.names=F)
+}
+
+Out <- list(Allres=MatOut2, Localres=LocalOut2, SigAllres=Mat.p, SigLocalres=Local.p)
 }
 
 #####################
