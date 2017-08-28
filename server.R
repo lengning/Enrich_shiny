@@ -72,6 +72,11 @@ Mat <- Mat[which(Mat$set.size>Lowersetsize),]
 Mat <- Mat[which(Mat$set.size<Uppersetsize),]
 MatOut <- Mat[order(Mat$p.value),c("Term","p.value","p.adj","z.score","set.size","set.mean","set.sd")]
 
+message("sets with size < ",Lowersetsize, " or > ", Uppersetsize, " are not considered" )
+LocalOut <- MatOut[which(is.na(MatOut[,"Term"])),]
+MatOut2 <-  cbind(rownames(MatOut), MatOut)
+LocalOut2 <- cbind(rownames(LocalOut), LocalOut)
+colnames(MatOut2)[1] = colnames(LocalOut2)[1] = "GO_ID"
 
 if(alter==TRUE){
 Mat.Cats <- rownames(MatOut2)
