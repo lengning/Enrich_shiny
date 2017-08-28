@@ -73,24 +73,30 @@ Mat <- Mat[which(Mat$set.size<Uppersetsize),]
 MatOut <- Mat[order(Mat$p.value),c("Term","p.value","p.adj","z.score","set.size","set.mean","set.sd")]
 
 
-message("sets with size < ",Lowersetsize, " or > ", Uppersetsize, " are not considered" )
-LocalOut <- MatOut[which(is.na(MatOut[,"Term"])),]
-MatOut2 <-  cbind(rownames(MatOut), MatOut)
-LocalOut2 <- cbind(rownames(LocalOut), LocalOut)
-colnames(MatOut2)[1] = colnames(LocalOut2)[1] = "GO_ID"
-
+if(alter==TRUE){
 Mat.Cats <- rownames(MatOut2)
 Mat.Aux <- Out$aux$set.data
-head(Mat.Aux)
+gInData <- names(which(Score==1))
+Mat.Aux <- Mat.Aux[which(Mat.Aux$symbol %in% gInData),]
+
 MaxCat <- pmin(length(Mat.Cats), 1000)
 
-GenesInCats <- sapply(1:MaxCat, function(x) {
-  gcats <- paste0(Mat.Aux[which(Mat.Aux$go_id == Mat.Cats[x]),"symbol"], collapse=", ")
-  return(gcats)
+GenesInCats <- lapply(1:MaxCat, function(x) {
+  useg <- Mat.Aux[which(Mat.Aux$go_id == Mat.Cats[x]),"symbol"]
+  numOL <- length(useg)
+  gcats <- paste0(useg, collapse=", ")
+  return(list(gcats, numOL))
   })
-names(GenesInCats) <- Mat.Cats[1:MaxCat]
+NumInCats <- unlist(sapply(GenesInCats, function(x) x[2]))
+if(length(Mat.Cats) > 1000) {NumInCats <- c(NumInCats, rep(0, length(Mat.Cats) - MaxCat))}
+names(NumInCats) <- Mat.Cats
+GenesInCats <- unlist(sapply(GenesInCats, function(x) x[1]))
+if(length(Mat.Cats) > 1000) {GenesInCats <- c(GenesInCats, rep("", length(Mat.Cats) - MaxCat))}
+names(GenesInCats) <- Mat.Cats
 
-MatOut2 <- data.frame(MatOut2[Mat.Cats,], Genes = GenesInCats[Mat.Cats])
+
+MatOut2 <- data.frame(MatOut2[Mat.Cats,], num.overlap = NumInCats[Mat.Cats], Genes = GenesInCats[Mat.Cats])
+}
 
 write.table(MatOut2,file=paste0(outprefix,"_enrichment_allsets.txt"),sep="\t", row.names=F)
 if(!is.null(Local)){
